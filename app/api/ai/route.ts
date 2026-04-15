@@ -206,11 +206,51 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Unsupported feature." }, { status: 400 })
     }
   } catch (error) {
-    const message =
-      error instanceof Error && error.message.trim().length > 0
-        ? error.message
-        : "Unable to generate AI guidance right now."
+    console.error("AI route error:", error)
+
+    const message = getFriendlyAiErrorMessage(error)
 
     return NextResponse.json({ error: message }, { status: 503 })
   }
+}
+
+function getFriendlyAiErrorMessage(error: unknown) {
+  const details =
+    error instanceof Error && error.message.trim().length > 0
+      ? error.message
+      : ""
+
+  if (
+    details.includes("temporarily overloaded") ||
+    details.includes("UNAVAILABLE") ||
+    details.includes("high demand")
+  ) {
+    return "AI is busy right now. Please try again in a moment."
+  }
+
+  if (
+    details.includes("quota") ||
+    details.includes("RESOURCE_EXHAUSTED") ||
+    details.includes("rate limit")
+  ) {
+    return "AI usage limit reached. Please try again later."
+  }
+
+  if (
+    details.includes("API key") ||
+    details.includes("GEMINI_API_KEY") ||
+    details.includes("API_KEY_INVALID")
+  ) {
+    return "AI service is not configured correctly right now."
+  }
+
+  if (
+    details.includes("ZodError") ||
+    details.includes("Invalid input") ||
+    details.includes("required")
+  ) {
+    return "AI returned an unexpected result. Please try again."
+  }
+
+  return "Unable to generate AI guidance right now. Please try again."
 }
