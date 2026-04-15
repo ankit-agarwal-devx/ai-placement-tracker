@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import type { LoginFormState } from "@/app/login/login-form-state"
 import { prisma } from "@/lib/prisma"
+import { createSession } from "@/lib/session"
 
 const loginSchema = z.object({
   email: z.email("Enter a valid email address.").transform((value) => value.toLowerCase()),
@@ -33,6 +34,10 @@ export async function loginUser(
   const user = await prisma.user.findUnique({
     where: { email },
     select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
       password: true,
     },
   })
@@ -56,6 +61,13 @@ export async function loginUser(
       },
     }
   }
+
+  await createSession({
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  })
 
   redirect("/dashboard")
 }

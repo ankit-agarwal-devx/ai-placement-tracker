@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { LayoutDashboard, Users, Briefcase, FileText } from "lucide-react";
 
+import { logoutUser } from "@/app/auth/actions";
+
 export default function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar p-5 text-sidebar-foreground">
@@ -27,9 +29,11 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto">
-        <button className="w-full rounded-lg bg-tertiary py-2 font-medium text-tertiary-foreground transition-colors hover:bg-tertiary/90">
-          Logout
-        </button>
+        <form action={logoutUser}>
+          <button className="w-full rounded-lg bg-tertiary py-2 font-medium text-tertiary-foreground transition-colors hover:bg-tertiary/90">
+            Logout
+          </button>
+        </form>
       </div>
     </div>
   );
