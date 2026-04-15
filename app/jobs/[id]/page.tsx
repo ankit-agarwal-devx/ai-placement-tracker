@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 import AppShell from "@/app/components/AppShell"
+import JobAiPanel from "@/app/components/JobAiPanel"
 import { applyToJob } from "@/app/jobs/actions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -83,19 +84,23 @@ export default async function JobDetailsPage({
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <Card>
-            <CardHeader>
-              <CardTitle>About this role</CardTitle>
-              <CardDescription>
-                Posted on {new Date(job.createdAt).toLocaleDateString()}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
-                {job.description}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>About this role</CardTitle>
+                <CardDescription>
+                  Posted on {new Date(job.createdAt).toLocaleDateString()}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
+                  {job.description}
+                </div>
+              </CardContent>
+            </Card>
+
+            {session.role === "STUDENT" ? <JobAiPanel jobId={job.id} /> : null}
+          </div>
 
           <Card>
             <CardHeader>

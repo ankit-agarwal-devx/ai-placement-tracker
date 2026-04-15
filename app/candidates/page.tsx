@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import AppShell from "@/app/components/AppShell"
+import CandidateAiPanel from "@/app/components/CandidateAiPanel"
 import { Card, CardContent } from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -154,6 +155,12 @@ export default async function CandidatesPage() {
             )}
           </CardContent>
         </Card>
+
+        {session.role === "STUDENT" && candidates.length > 0 ? (
+          <div className="mt-6">
+            <CandidateAiPanel />
+          </div>
+        ) : null}
       </main>
     </AppShell>
   )
