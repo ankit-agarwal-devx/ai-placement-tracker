@@ -45,7 +45,7 @@ export default function Sidebar() {
 
       <div className="mt-auto">
         <form action={logoutUser}>
-          <button className="w-full rounded-lg bg-tertiary py-2 font-medium text-tertiary-foreground transition-colors hover:bg-tertiary/90">
+          <button className="w-full cursor-pointer rounded-lg bg-tertiary py-2 font-medium text-tertiary-foreground transition-colors hover:bg-tertiary/90">
             Logout
           </button>
         </form>
