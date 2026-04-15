@@ -12,12 +12,17 @@ type AppShellProps = {
 
 export default function AppShell({ children, name, role }: AppShellProps) {
   return (
-    <div className="flex">
+      <div className="flex h-screen overflow-hidden">
       <Sidebar />
 
-      <div className="flex min-h-screen flex-1 flex-col">
+      <div className="flex flex-1 flex-col">
         <Navbar name={name} role={role} />
-        <div className="flex-1">{children}</div>
+        
+        {/* Scrollable content */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+
         <Footer />
       </div>
     </div>
