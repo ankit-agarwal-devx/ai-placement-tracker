@@ -106,12 +106,7 @@ export default function RegisterForm() {
             <Button type="submit" className="sm:min-w-40" disabled={pending}>
               {pending ? "Creating account..." : "Register now"}
             </Button>
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-            >
-              View dashboard
-            </Link>
+
           </div>
         </form>
       </CardContent>
