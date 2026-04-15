@@ -33,7 +33,7 @@ export default function Navbar({ name = "", role, onMenuClick }: NavbarProps) {
         <Menu className="size-4" />
       </Button>
 
-      <div className="flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-3">
         <div className="text-right">
           <p className="font-medium">{name}</p>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
