@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma"
 import { createSession } from "@/lib/session"
 
 const loginSchema = z.object({
-  email: z.email("Enter a valid email address.").transform((value) => value.toLowerCase()),
+  email: z.string().email("Enter a valid email address.").transform((value) => value.toLowerCase()),
   password: z.string().min(1, "Password is required."),
 })
 
@@ -24,7 +24,7 @@ export async function loginUser(
 
   if (!parsed.success) {
     return {
-      message: "Please fix the highlighted fields.",
+      message: "",
       fieldErrors: parsed.error.flatten().fieldErrors,
     }
   }
@@ -44,7 +44,7 @@ export async function loginUser(
 
   if (!user) {
     return {
-      message: "No account found with this email.",
+      message: "",
       fieldErrors: {
         email: ["No account found with this email."],
       },
@@ -55,7 +55,7 @@ export async function loginUser(
 
   if (!passwordMatches) {
     return {
-      message: "Incorrect password.",
+      message: "",
       fieldErrors: {
         password: ["Incorrect password."],
       },

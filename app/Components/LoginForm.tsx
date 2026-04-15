@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 
 import { loginUser } from "@/app/login/actions"
 import { initialLoginState } from "@/app/login/login-form-state"
@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input"
 
 export default function LoginForm() {
   const [state, formAction, pending] = useActionState(loginUser, initialLoginState)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
   return (
     <Card className="w-full max-w-xl border-primary/15 shadow-lg shadow-primary/10">
@@ -42,6 +44,8 @@ export default function LoginForm() {
               id="email"
               name="email"
               type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
               required
             />
@@ -54,6 +58,8 @@ export default function LoginForm() {
               id="password"
               name="password"
               type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
               required
             />
