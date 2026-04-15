@@ -1,6 +1,7 @@
 "use server"
 
 import bcrypt from "bcrypt"
+import { redirect } from "next/navigation"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
@@ -65,6 +66,7 @@ export async function registerCandidate(
       name,
       email,
       password: hashedPassword,
+      role: "STUDENT",
       candidate: {
         create: {
           name,
@@ -76,8 +78,5 @@ export async function registerCandidate(
     },
   })
 
-  return {
-    message: "Registration successful. Your candidate profile has been created.",
-    success: true,
-  }
+  redirect("/login")
 }

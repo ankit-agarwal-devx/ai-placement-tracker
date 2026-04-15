@@ -2,6 +2,7 @@ import "server-only"
 
 import jwt from "jsonwebtoken"
 import { cookies } from "next/headers"
+import { Role } from "@/app/generated/prisma/client"
 
 const SESSION_COOKIE_NAME = "hireflow_session"
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7
@@ -10,7 +11,7 @@ type SessionPayload = {
   userId: string
   name: string
   email: string
-  role: "ADMIN" | "STUDENT"
+  role: Role
 }
 
 function getSessionSecret() {
@@ -73,7 +74,7 @@ export async function getSession() {
       userId: String(decoded.userId),
       name: String(decoded.name),
       email: String(decoded.email),
-      role: decoded.role === "ADMIN" ? "ADMIN" : "STUDENT",
+      role: decoded.role as Role,
     } satisfies SessionPayload
   } catch {
     return null
