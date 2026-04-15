@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
@@ -58,6 +58,8 @@ export async function saveJob(
   }
 
   revalidatePath("/jobs")
+  revalidateTag("jobs", "max")
+  revalidateTag("dashboard", "max")
 
   if (jobId) {
     revalidatePath(`/jobs/${jobId}`)
@@ -109,6 +111,9 @@ export async function applyToJob(jobId: string) {
   revalidatePath("/jobs")
   revalidatePath(`/jobs/${jobId}`)
   revalidatePath("/dashboard")
+  revalidateTag("jobs", "max")
+  revalidateTag("applications", "max")
+  revalidateTag("dashboard", "max")
 
   redirect(`/jobs/${jobId}?status=applied`)
 }

@@ -1,7 +1,7 @@
 "use server"
 
 import bcrypt from "bcrypt"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
@@ -96,6 +96,8 @@ export async function createCandidateProfile(
 
   revalidatePath("/candidates")
   revalidatePath("/dashboard")
+  revalidateTag("candidates", "max")
+  revalidateTag("dashboard", "max")
   redirect("/candidates")
 }
 
@@ -196,5 +198,8 @@ export async function updateCandidateProfile(
   revalidatePath(`/candidates/${candidateId}/edit`)
   revalidatePath("/applications")
   revalidatePath("/dashboard")
+  revalidateTag("candidates", "max")
+  revalidateTag("applications", "max")
+  revalidateTag("dashboard", "max")
   redirect("/candidates")
 }

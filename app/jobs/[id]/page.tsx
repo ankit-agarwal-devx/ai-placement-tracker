@@ -8,7 +8,7 @@ import { applyToJob } from "@/app/jobs/actions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { prisma } from "@/lib/prisma"
+import { getCachedJobDetails } from "@/lib/cached-data"
 import { getSession } from "@/lib/session"
 
 type JobDetailsPageProps = {
@@ -32,23 +32,7 @@ export default async function JobDetailsPage({
     ? resolvedSearchParams.status[0]
     : resolvedSearchParams.status
 
-  const job = await prisma.job.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      title: true,
-      company: true,
-      description: true,
-      createdAt: true,
-      applications: {
-        select: {
-          id: true,
-          status: true,
-          userId: true,
-        },
-      },
-    },
-  })
+  const job = await getCachedJobDetails(id)
 
   if (!job) {
     notFound()

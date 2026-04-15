@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { prisma } from "@/lib/prisma"
+import { getCachedCandidates } from "@/lib/cached-data"
 import { getSession } from "@/lib/session"
 
 export default async function CandidatesPage() {
@@ -24,22 +24,7 @@ export default async function CandidatesPage() {
     redirect("/login")
   }
 
-  const candidates = await prisma.candidate.findMany({
-    where: session.role === "ADMIN" ? undefined : { userId: session.userId },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      skills: true,
-      resume: true,
-      createdAt: true,
-      userId: true,
-      applications: {
-        select: { id: true },
-      },
-    },
-  })
+  const candidates = await getCachedCandidates(session.role, session.userId)
 
   return (
     <AppShell name={session.name} role={session.role}>

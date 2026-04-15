@@ -11,7 +11,7 @@ import {
 } from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { prisma } from "@/lib/prisma"
+import { getCachedJobsList } from "@/lib/cached-data"
 import { getSession } from "@/lib/session"
 
 export default async function JobsPage() {
@@ -21,19 +21,7 @@ export default async function JobsPage() {
     redirect("/login")
   }
 
-  const jobs = await prisma.job.findMany({
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      company: true,
-      description: true,
-      createdAt: true,
-      applications: {
-        select: { id: true },
-      },
-    },
-  })
+  const jobs = await getCachedJobsList()
 
   return (
     <AppShell name={session.name} role={session.role}>

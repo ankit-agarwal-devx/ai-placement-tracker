@@ -17,7 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { prisma } from "@/lib/prisma"
+import {
+  getCachedAdminDashboardData,
+  getCachedStudentDashboardData,
+} from "@/lib/cached-data"
 
 type MainContentProps = {
   session: {
@@ -29,36 +32,13 @@ type MainContentProps = {
 
 export default async function MainContent({ session }: MainContentProps) {
   if (session.role === "ADMIN") {
-    const [candidateCount, jobCount, applicationCount, shortlistedCount, recentApplications] =
-      await Promise.all([
-        prisma.candidate.count(),
-        prisma.job.count(),
-        prisma.application.count(),
-        prisma.application.count({
-          where: { status: "SHORTLISTED" },
-        }),
-        prisma.application.findMany({
-          orderBy: { createdAt: "desc" },
-          take: 6,
-          select: {
-            id: true,
-            status: true,
-            createdAt: true,
-            candidate: {
-              select: {
-                name: true,
-              },
-            },
-            job: {
-              select: {
-                id: true,
-                title: true,
-                company: true,
-              },
-            },
-          },
-        }),
-      ])
+    const {
+      candidateCount,
+      jobCount,
+      applicationCount,
+      shortlistedCount,
+      recentApplications,
+    } = await getCachedAdminDashboardData()
 
     return (
       <main className="min-h-screen bg-background p-6">
@@ -169,44 +149,8 @@ export default async function MainContent({ session }: MainContentProps) {
     )
   }
 
-  const [candidateProfile, applications, recentJobs] = await Promise.all([
-    prisma.candidate.findUnique({
-      where: { userId: session.userId },
-      select: {
-        id: true,
-        name: true,
-        skills: true,
-        resume: true,
-      },
-    }),
-    prisma.application.findMany({
-      where: { userId: session.userId },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      select: {
-        id: true,
-        status: true,
-        createdAt: true,
-        job: {
-          select: {
-            id: true,
-            title: true,
-            company: true,
-          },
-        },
-      },
-    }),
-    prisma.job.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 4,
-      select: {
-        id: true,
-        title: true,
-        company: true,
-        description: true,
-      },
-    }),
-  ])
+  const { candidateProfile, applications, recentJobs } =
+    await getCachedStudentDashboardData(session.userId)
 
   const selectedCount = applications.filter(
     (application) => application.status === "SELECTED"

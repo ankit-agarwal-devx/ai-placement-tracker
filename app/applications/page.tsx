@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { prisma } from "@/lib/prisma"
+import { getCachedApplications } from "@/lib/cached-data"
 import { getSession } from "@/lib/session"
 
 export default async function ApplicationsPage() {
@@ -28,29 +28,7 @@ export default async function ApplicationsPage() {
     redirect("/login")
   }
 
-  const applications = await prisma.application.findMany({
-    where: session.role === "ADMIN" ? undefined : { userId: session.userId },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      status: true,
-      createdAt: true,
-      notes: true,
-      job: {
-        select: {
-          id: true,
-          title: true,
-          company: true,
-        },
-      },
-      candidate: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-    },
-  })
+  const applications = await getCachedApplications(session.role, session.userId)
 
   const selectedCount = applications.filter(
     (application) => application.status === "SELECTED"

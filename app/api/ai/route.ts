@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 
@@ -134,6 +134,9 @@ export async function POST(request: Request) {
         revalidatePath("/applications")
         revalidatePath("/jobs")
         revalidatePath(`/jobs/${jobId}`)
+        revalidateTag("applications", "max")
+        revalidateTag("jobs", "max")
+        revalidateTag("dashboard", "max")
       }
 
       return NextResponse.json({
