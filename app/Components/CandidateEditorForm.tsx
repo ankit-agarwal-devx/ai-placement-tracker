@@ -8,10 +8,24 @@ import {
   updateCandidateProfile,
 } from "@/app/candidates/actions"
 import { initialCandidateFormState } from "@/app/candidates/candidate-form-state"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/Card"
+import {
+  FieldError,
+  Form,
+  FormActions,
+  FormField,
+  FormLabel,
+  FormMessage,
+  FormTextarea,
+} from "@/components/Form"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
 
 type CandidateEditorFormProps = {
   candidate?: {
@@ -24,9 +38,6 @@ type CandidateEditorFormProps = {
   mode: "create" | "edit"
   role: "ADMIN" | "STUDENT"
 }
-
-const textAreaClassName =
-  "min-h-32 w-full rounded-lg border border-primary/15 bg-card px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-secondary focus-visible:ring-3 focus-visible:ring-secondary/25"
 
 export default function CandidateEditorForm({
   candidate,
@@ -57,11 +68,9 @@ export default function CandidateEditorForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-5">
-          <div className="grid gap-2">
-            <label htmlFor="name" className="text-sm font-medium text-primary">
-              Full name
-            </label>
+        <Form action={formAction}>
+          <FormField>
+            <FormLabel htmlFor="name">Full name</FormLabel>
             <Input
               id="name"
               name="name"
@@ -70,12 +79,10 @@ export default function CandidateEditorForm({
               required
             />
             <FieldError errors={state.fieldErrors?.name} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="email" className="text-sm font-medium text-primary">
-              Email
-            </label>
+          <FormField>
+            <FormLabel htmlFor="email">Email</FormLabel>
             <Input
               id="email"
               name="email"
@@ -85,12 +92,12 @@ export default function CandidateEditorForm({
               required
             />
             <FieldError errors={state.fieldErrors?.email} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="password" className="text-sm font-medium text-primary">
+          <FormField>
+            <FormLabel htmlFor="password">
               {isCreate ? "Password" : "New password"}
-            </label>
+            </FormLabel>
             <Input
               id="password"
               name="password"
@@ -99,27 +106,22 @@ export default function CandidateEditorForm({
               required={isCreate}
             />
             <FieldError errors={state.fieldErrors?.password} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="skills" className="text-sm font-medium text-primary">
-              Skills
-            </label>
-            <textarea
+          <FormField>
+            <FormLabel htmlFor="skills">Skills</FormLabel>
+            <FormTextarea
               id="skills"
               name="skills"
               defaultValue={candidate?.skills ?? ""}
               placeholder="React, Node.js, SQL"
-              className={textAreaClassName}
               required
             />
             <FieldError errors={state.fieldErrors?.skills} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="resume" className="text-sm font-medium text-primary">
-              Resume URL
-            </label>
+          <FormField>
+            <FormLabel htmlFor="resume">Resume URL</FormLabel>
             <Input
               id="resume"
               name="resume"
@@ -128,19 +130,13 @@ export default function CandidateEditorForm({
               placeholder="https://example.com/resume.pdf"
             />
             <FieldError errors={state.fieldErrors?.resume} />
-          </div>
+          </FormField>
 
-          <p
-            aria-live="polite"
-            className={cn(
-              "text-sm",
-              state.message ? "text-destructive" : "text-muted-foreground"
-            )}
-          >
+          <FormMessage tone={state.message ? "error" : "muted"}>
             {state.message}
-          </p>
+          </FormMessage>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <FormActions>
             <Button type="submit" className="sm:min-w-40" disabled={pending}>
               {pending
                 ? isCreate
@@ -156,17 +152,9 @@ export default function CandidateEditorForm({
             >
               Back to candidates
             </Link>
-          </div>
-        </form>
+          </FormActions>
+        </Form>
       </CardContent>
     </Card>
   )
-}
-
-function FieldError({ errors }: { errors?: string[] }) {
-  if (!errors?.length) {
-    return null
-  }
-
-  return <p className="text-sm text-destructive">{errors[0]}</p>
 }

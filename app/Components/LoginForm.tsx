@@ -5,8 +5,22 @@ import { useActionState } from "react"
 
 import { loginUser } from "@/app/login/actions"
 import { initialLoginState } from "@/app/login/login-form-state"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/Card"
+import {
+  FieldError,
+  Form,
+  FormActions,
+  FormField,
+  FormLabel,
+  FormMessage,
+} from "@/components/Form"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
 export default function LoginForm() {
@@ -21,11 +35,9 @@ export default function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-5">
-          <div className="grid gap-2">
-            <label htmlFor="email" className="text-sm font-medium text-primary">
-              Email
-            </label>
+        <Form action={formAction}>
+          <FormField>
+            <FormLabel htmlFor="email">Email</FormLabel>
             <Input
               id="email"
               name="email"
@@ -34,12 +46,10 @@ export default function LoginForm() {
               required
             />
             <FieldError errors={state.fieldErrors?.email} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="password" className="text-sm font-medium text-primary">
-              Password
-            </label>
+          <FormField>
+            <FormLabel htmlFor="password">Password</FormLabel>
             <Input
               id="password"
               name="password"
@@ -48,13 +58,11 @@ export default function LoginForm() {
               required
             />
             <FieldError errors={state.fieldErrors?.password} />
-          </div>
+          </FormField>
 
-          <p aria-live="polite" className="text-sm text-destructive">
-            {state.message}
-          </p>
+          <FormMessage tone="error">{state.message}</FormMessage>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <FormActions>
             <Button type="submit" className="sm:min-w-40" disabled={pending}>
               {pending ? "Signing in..." : "Login"}
             </Button>
@@ -64,17 +72,9 @@ export default function LoginForm() {
             >
               Create an account
             </Link>
-          </div>
-        </form>
+          </FormActions>
+        </Form>
       </CardContent>
     </Card>
   )
-}
-
-function FieldError({ errors }: { errors?: string[] }) {
-  if (!errors?.length) {
-    return null
-  }
-
-  return <p className="text-sm text-destructive">{errors[0]}</p>
 }

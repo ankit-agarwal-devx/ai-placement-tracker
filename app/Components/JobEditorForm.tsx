@@ -5,10 +5,24 @@ import { useActionState } from "react"
 
 import { saveJob } from "@/app/jobs/actions"
 import { initialJobFormState } from "@/app/jobs/job-form-state"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/Card"
+import {
+  FieldError,
+  Form,
+  FormActions,
+  FormField,
+  FormLabel,
+  FormMessage,
+  FormTextarea,
+} from "@/components/Form"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
 
 type JobEditorFormProps = {
   job?: {
@@ -18,9 +32,6 @@ type JobEditorFormProps = {
     description: string
   } | null
 }
-
-const textAreaClassName =
-  "min-h-40 w-full rounded-lg border border-primary/15 bg-card px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-secondary focus-visible:ring-3 focus-visible:ring-secondary/25"
 
 export default function JobEditorForm({ job }: JobEditorFormProps) {
   const [state, formAction, pending] = useActionState(saveJob, initialJobFormState)
@@ -39,13 +50,11 @@ export default function JobEditorForm({ job }: JobEditorFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-5">
+        <Form action={formAction}>
           <input type="hidden" name="jobId" value={job?.id ?? ""} />
 
-          <div className="grid gap-2">
-            <label htmlFor="title" className="text-sm font-medium text-primary">
-              Job title
-            </label>
+          <FormField>
+            <FormLabel htmlFor="title">Job title</FormLabel>
             <Input
               id="title"
               name="title"
@@ -54,12 +63,10 @@ export default function JobEditorForm({ job }: JobEditorFormProps) {
               required
             />
             <FieldError errors={state.fieldErrors?.title} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="company" className="text-sm font-medium text-primary">
-              Company
-            </label>
+          <FormField>
+            <FormLabel htmlFor="company">Company</FormLabel>
             <Input
               id="company"
               name="company"
@@ -68,34 +75,26 @@ export default function JobEditorForm({ job }: JobEditorFormProps) {
               required
             />
             <FieldError errors={state.fieldErrors?.company} />
-          </div>
+          </FormField>
 
-          <div className="grid gap-2">
-            <label htmlFor="description" className="text-sm font-medium text-primary">
-              Description
-            </label>
-            <textarea
+          <FormField>
+            <FormLabel htmlFor="description">Description</FormLabel>
+            <FormTextarea
               id="description"
               name="description"
               defaultValue={job?.description ?? ""}
               placeholder="Describe responsibilities, expectations, and what makes this role exciting."
-              className={textAreaClassName}
+              className="min-h-40"
               required
             />
             <FieldError errors={state.fieldErrors?.description} />
-          </div>
+          </FormField>
 
-          <p
-            aria-live="polite"
-            className={cn(
-              "text-sm",
-              state.message ? "text-destructive" : "text-muted-foreground"
-            )}
-          >
+          <FormMessage tone={state.message ? "error" : "muted"}>
             {state.message}
-          </p>
+          </FormMessage>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <FormActions>
             <Button type="submit" className="sm:min-w-40" disabled={pending}>
               {pending ? "Saving..." : isEditing ? "Update job" : "Create job"}
             </Button>
@@ -105,17 +104,9 @@ export default function JobEditorForm({ job }: JobEditorFormProps) {
             >
               Back to jobs
             </Link>
-          </div>
-        </form>
+          </FormActions>
+        </Form>
       </CardContent>
     </Card>
   )
-}
-
-function FieldError({ errors }: { errors?: string[] }) {
-  if (!errors?.length) {
-    return null
-  }
-
-  return <p className="text-sm text-destructive">{errors[0]}</p>
 }

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react"
 
 import Footer from "@/app/components/Footer"
-import Sidebar from "@/app/components/Sidebar"
-import Topbar from "@/app/components/Topbar"
+import Navbar from "@/components/Navbar"
+import Sidebar from "@/components/Sidebar"
 
 type AppShellProps = {
   children: ReactNode
@@ -16,7 +16,7 @@ export default function AppShell({ children, name, role }: AppShellProps) {
       <Sidebar />
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <Topbar name={name} role={role} />
+        <Navbar name={name} role={role} />
         <div className="flex-1">{children}</div>
         <Footer />
       </div>

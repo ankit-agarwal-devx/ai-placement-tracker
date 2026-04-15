@@ -2,9 +2,9 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import AppShell from "@/app/components/AppShell"
+import { Card, CardContent } from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   Table,
   TableBody,

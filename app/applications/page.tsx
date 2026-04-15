@@ -2,8 +2,14 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import AppShell from "@/app/components/AppShell"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,

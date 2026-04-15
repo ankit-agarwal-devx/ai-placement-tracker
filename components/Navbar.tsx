@@ -1,20 +1,21 @@
-"use client";
+"use client"
 
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
 
-type TopbarProps = {
+type NavbarProps = {
   name: string
   role: "ADMIN" | "STUDENT"
 }
 
-export default function Topbar({ name="", role }: TopbarProps) {
-  const initials = name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase()
+export default function Navbar({ name = "", role }: NavbarProps) {
+  const initials =
+    name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "HF"
 
   return (
     <div className="flex items-center justify-between border-b border-primary/10 bg-card/95 p-4 backdrop-blur">

@@ -2,9 +2,15 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import AppShell from "@/app/components/AppShell"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { prisma } from "@/lib/prisma"
 import { getSession } from "@/lib/session"
 
