@@ -32,6 +32,34 @@ export type AiInsight = {
   }>
 }
 
+export type AdminCandidateAssessment = {
+  candidateId: string
+  applicationId: string
+  candidateName: string
+  score: number
+  suitable: boolean
+  summary: string
+  strengths: string[]
+  gaps: string[]
+}
+
+const adminAssessmentSchema = z.object({
+  candidateId: z.string().min(1),
+  applicationId: z.string().min(1),
+  candidateName: z.string().min(1),
+  score: z.number().min(0).max(100),
+  suitable: z.boolean(),
+  summary: z.string().min(1),
+  strengths: z.array(z.string().min(1)).min(1),
+  gaps: z.array(z.string().min(1)).min(1),
+})
+
+const adminShortlistSchema = z.object({
+  jobTitle: z.string().min(1),
+  threshold: z.number().min(0).max(100),
+  assessments: z.array(adminAssessmentSchema),
+})
+
 const aiInsightSchema = z.object({
   feature: z.enum([
     "resume-analysis",
@@ -143,6 +171,63 @@ export function buildSkillRoadmap(
         "Suggest a practical learning roadmap, including what to strengthen, what to learn next, and a short action plan.",
     },
   })
+}
+
+export function buildAdminShortlist(input: {
+  job: JobSource & { id: string }
+  candidates: Array<{
+    candidateId: string
+    applicationId: string
+    candidateName: string
+    email: string
+    skills: string
+    resume: string | null
+    currentStatus: string
+  }>
+}) {
+  const raw = callGeminiWithRetry(
+    [
+      "You are an AI hiring assistant inside a placement tracker app.",
+      "Evaluate each candidate for this one job and return only valid JSON.",
+      "Use a score from 0 to 100.",
+      "Mark suitable=true only when score is strictly greater than 70.",
+      "Be practical and conservative. Do not invent missing experience.",
+      "Each candidate must be assessed independently.",
+      `Context: ${JSON.stringify(input, null, 2)}`,
+      JSON.stringify(
+        {
+          requiredShape: {
+            jobTitle: input.job.title,
+            threshold: 70,
+            assessments: [
+              {
+                candidateId: "string",
+                applicationId: "string",
+                candidateName: "string",
+                score: "number 0-100",
+                suitable: "boolean, true only if score > 70",
+                summary: "short hiring summary",
+                strengths: ["string", "string"],
+                gaps: ["string", "string"],
+              },
+            ],
+          },
+        },
+        null,
+        2
+      ),
+    ].join("\n\n")
+  )
+
+  const parsed = adminShortlistSchema.parse(normalizeAdminShortlist(raw, input.job.title))
+
+  return {
+    ...parsed,
+    assessments: parsed.assessments.map((assessment) => ({
+      ...assessment,
+      suitable: assessment.score > 70,
+    })),
+  }
 }
 
 function generateAiInsight(input: {
@@ -358,4 +443,61 @@ function getResponseSchema() {
     },
     required: ["feature", "title", "intro", "sections"],
   }
+}
+
+function normalizeAdminShortlist(raw: unknown, jobTitle: string) {
+  if (!raw || typeof raw !== "object") {
+    return raw
+  }
+
+  const candidate = raw as Record<string, unknown>
+
+  if (
+    typeof candidate.jobTitle === "string" &&
+    typeof candidate.threshold === "number" &&
+    Array.isArray(candidate.assessments)
+  ) {
+    return candidate
+  }
+
+  if (
+    candidate.result &&
+    typeof candidate.result === "object"
+  ) {
+    const nested = candidate.result as Record<string, unknown>
+
+    if (
+      typeof nested.jobTitle === "string" &&
+      typeof nested.threshold === "number" &&
+      Array.isArray(nested.assessments)
+    ) {
+      return nested
+    }
+  }
+
+  if (Array.isArray(candidate.assessments)) {
+    return {
+      jobTitle,
+      threshold: 70,
+      assessments: candidate.assessments,
+    }
+  }
+
+  if (Array.isArray(candidate.candidates)) {
+    return {
+      jobTitle,
+      threshold: 70,
+      assessments: candidate.candidates,
+    }
+  }
+
+  if (Array.isArray(candidate.shortlistedCandidates)) {
+    return {
+      jobTitle,
+      threshold: 70,
+      assessments: candidate.shortlistedCandidates,
+    }
+  }
+
+  return candidate
 }

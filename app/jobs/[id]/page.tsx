@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
+import AdminShortlistPanel from "@/app/components/AdminShortlistPanel"
 import AppShell from "@/app/components/AppShell"
 import JobAiPanel from "@/app/components/JobAiPanel"
 import { applyToJob } from "@/app/jobs/actions"
@@ -100,6 +101,7 @@ export default async function JobDetailsPage({
             </Card>
 
             {session.role === "STUDENT" ? <JobAiPanel jobId={job.id} /> : null}
+            {session.role === "ADMIN" ? <AdminShortlistPanel jobId={job.id} /> : null}
           </div>
 
           <Card>

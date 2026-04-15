@@ -1,9 +1,11 @@
+import { revalidatePath } from "next/cache"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
 import { getSession } from "@/lib/session"
 import {
+  buildAdminShortlist,
   buildApplicationHelp,
   buildInterviewPrep,
   buildJobMatch,
@@ -13,6 +15,7 @@ import {
 
 const aiRequestSchema = z.object({
   feature: z.enum([
+    "admin-shortlist",
     "resume-analysis",
     "job-match",
     "application-help",
@@ -32,13 +35,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    if (session.role !== "STUDENT") {
-      return NextResponse.json(
-        { error: "These AI tools are currently available for candidate accounts only." },
-        { status: 403 }
-      )
-    }
-
     const body = await request.json().catch(() => null)
     const parsed = aiRequestSchema.safeParse(body)
 
@@ -46,6 +42,110 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Invalid AI request.", details: parsed.error.flatten() },
         { status: 400 }
+      )
+    }
+
+    const { feature, jobId, resumeText, targetRole } = parsed.data
+
+    if (feature === "admin-shortlist") {
+      if (session.role !== "ADMIN") {
+        return NextResponse.json(
+          { error: "Only admin accounts can run AI shortlisting." },
+          { status: 403 }
+        )
+      }
+
+      if (!jobId) {
+        return NextResponse.json(
+          { error: "jobId is required for this AI feature." },
+          { status: 400 }
+        )
+      }
+
+      const job = await prisma.job.findUnique({
+        where: { id: jobId },
+        select: {
+          id: true,
+          title: true,
+          company: true,
+          description: true,
+          applications: {
+            select: {
+              id: true,
+              status: true,
+              candidate: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  skills: true,
+                  resume: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      if (!job) {
+        return NextResponse.json({ error: "Job not found." }, { status: 404 })
+      }
+
+      if (job.applications.length === 0) {
+        return NextResponse.json(
+          { error: "No applications are available for this job yet." },
+          { status: 400 }
+        )
+      }
+
+      const shortlist = buildAdminShortlist({
+        job: {
+          id: job.id,
+          title: job.title,
+          company: job.company,
+          description: job.description,
+        },
+        candidates: job.applications.map((application) => ({
+          applicationId: application.id,
+          candidateId: application.candidate.id,
+          candidateName: application.candidate.name,
+          email: application.candidate.email,
+          skills: application.candidate.skills,
+          resume: application.candidate.resume,
+          currentStatus: application.status,
+        })),
+      })
+
+      const shortlistedIds = shortlist.assessments
+        .filter((assessment) => assessment.score > 70)
+        .map((assessment) => assessment.applicationId)
+
+      if (shortlistedIds.length > 0) {
+        await prisma.application.updateMany({
+          where: {
+            id: { in: shortlistedIds },
+            status: { notIn: ["SELECTED", "REJECTED"] },
+          },
+          data: {
+            status: "SHORTLISTED",
+          },
+        })
+
+        revalidatePath("/applications")
+        revalidatePath("/jobs")
+        revalidatePath(`/jobs/${jobId}`)
+      }
+
+      return NextResponse.json({
+        ...shortlist,
+        shortlistedCount: shortlistedIds.length,
+      })
+    }
+
+    if (session.role !== "STUDENT") {
+      return NextResponse.json(
+        { error: "These AI tools are currently available for candidate accounts only." },
+        { status: 403 }
       )
     }
 
@@ -64,8 +164,6 @@ export async function POST(request: Request) {
         { status: 404 }
       )
     }
-
-    const { feature, jobId, resumeText, targetRole } = parsed.data
 
     if (feature === "resume-analysis") {
       return NextResponse.json(
