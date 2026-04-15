@@ -106,7 +106,20 @@ export default function RegisterForm() {
             <Button type="submit" className="sm:min-w-40" disabled={pending}>
               {pending ? "Creating account..." : "Register now"}
             </Button>
-
+            <div className="flex gap-4 text-sm font-medium">
+              <Link
+                href="/login"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Already have an account?
+              </Link>
+              <Link
+                href="/dashboard"
+                className="text-secondary-foreground underline-offset-4 hover:underline"
+              >
+                View dashboard
+              </Link>
+            </div>
           </div>
         </form>
       </CardContent>
