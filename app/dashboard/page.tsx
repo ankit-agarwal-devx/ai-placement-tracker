@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation"
 
-import Footer from "../components/Footer"
+import AppShell from "../components/AppShell"
 import MainContent from "../components/MainContent"
-import Sidebar from "../components/Sidebar"
-import Topbar from "../components/Topbar"
 import { getSession } from "@/lib/session"
 
 export default async function DashboardPage() {
@@ -14,14 +12,8 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex">
-      <Sidebar />
-
-      <div className="flex-1 flex flex-col">
-        <Topbar name={session.name} role={session.role} />
-        <MainContent />
-        <Footer />
-      </div>
-    </div>
+    <AppShell name={session.name} role={session.role}>
+      <MainContent />
+    </AppShell>
   )
 }
