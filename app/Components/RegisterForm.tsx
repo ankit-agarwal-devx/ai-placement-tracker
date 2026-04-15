@@ -107,12 +107,6 @@ export default function RegisterForm() {
               >
                 Already have an account?
               </Link>
-              <Link
-                href="/dashboard"
-                className="text-secondary-foreground underline-offset-4 hover:underline"
-              >
-                View dashboard
-              </Link>
             </div>
           </FormActions>
         </Form>
