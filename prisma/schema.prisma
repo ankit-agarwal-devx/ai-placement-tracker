@@ -19,6 +19,7 @@ model User {
   password  String
   role      Role     @default(STUDENT)
   createdAt DateTime @default(now())
+  candidate Candidate?
   applications Application[]
 }
 
@@ -29,6 +30,8 @@ model Candidate {
   skills    String
   resume    String?  // URL or text
   createdAt DateTime @default(now())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
   applications Application[]
 }
 
