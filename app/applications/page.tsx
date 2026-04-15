@@ -58,12 +58,12 @@ export default async function ApplicationsPage() {
 
   return (
     <AppShell name={session.name} role={session.role}>
-      <main className="min-h-full bg-background p-6">
+      <main className="min-h-full bg-background px-4 py-5 sm:px-6 sm:py-6">
         <div className="mb-6">
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-secondary-foreground">
             Applications
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-primary">
+          <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
             {session.role === "ADMIN" ? "All job applications" : "Your applications"}
           </h1>
           <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
@@ -117,54 +117,108 @@ export default async function ApplicationsPage() {
           </CardHeader>
           <CardContent className="p-0">
             {applications.length ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {session.role === "ADMIN" ? <TableHead>Candidate</TableHead> : null}
-                    <TableHead>Job</TableHead>
-                    <TableHead>Company</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Applied on</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <>
+                <div className="grid gap-4 p-4 sm:hidden">
                   {applications.map((application) => (
-                    <TableRow key={application.id}>
-                      {session.role === "ADMIN" ? (
-                        <TableCell>
+                    <Card
+                      key={application.id}
+                      className="border border-primary/10 bg-primary/5 shadow-none"
+                    >
+                      <CardContent className="space-y-4 p-4">
+                        {session.role === "ADMIN" ? (
                           <div className="space-y-1">
                             <p className="font-medium text-primary">
                               {application.candidate.name}
                             </p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-sm text-muted-foreground">
                               {application.candidate.email}
                             </p>
                           </div>
-                        </TableCell>
-                      ) : null}
-                      <TableCell>{application.job.title}</TableCell>
-                      <TableCell>{application.job.company}</TableCell>
-                      <TableCell>
-                        <Badge variant={getStatusVariant(application.status)}>
-                          {formatStatus(application.status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(application.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
+                        ) : null}
+
+                        <div className="space-y-3 text-sm text-muted-foreground">
+                          <p>
+                            <span className="font-medium text-primary">Job:</span>{" "}
+                            {application.job.title}
+                          </p>
+                          <p>
+                            <span className="font-medium text-primary">Company:</span>{" "}
+                            {application.job.company}
+                          </p>
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="font-medium text-primary">Status</span>
+                            <Badge variant={getStatusVariant(application.status)}>
+                              {formatStatus(application.status)}
+                            </Badge>
+                          </div>
+                          <p>
+                            <span className="font-medium text-primary">Applied on:</span>{" "}
+                            {new Date(application.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+
                         <Link
                           href={`/jobs/${application.job.id}`}
-                          className="font-medium text-secondary-foreground underline-offset-4 hover:text-primary hover:underline"
+                          className="inline-flex text-sm font-medium text-secondary-foreground underline-offset-4 hover:text-primary hover:underline"
                         >
                           View job
                         </Link>
-                      </TableCell>
-                    </TableRow>
+                      </CardContent>
+                    </Card>
                   ))}
-                </TableBody>
-              </Table>
+                </div>
+
+                <div className="hidden sm:block">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        {session.role === "ADMIN" ? <TableHead>Candidate</TableHead> : null}
+                        <TableHead>Job</TableHead>
+                        <TableHead>Company</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Applied on</TableHead>
+                        <TableHead>Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {applications.map((application) => (
+                        <TableRow key={application.id}>
+                          {session.role === "ADMIN" ? (
+                            <TableCell>
+                              <div className="space-y-1">
+                                <p className="font-medium text-primary">
+                                  {application.candidate.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {application.candidate.email}
+                                </p>
+                              </div>
+                            </TableCell>
+                          ) : null}
+                          <TableCell>{application.job.title}</TableCell>
+                          <TableCell>{application.job.company}</TableCell>
+                          <TableCell>
+                            <Badge variant={getStatusVariant(application.status)}>
+                              {formatStatus(application.status)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {new Date(application.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <Link
+                              href={`/jobs/${application.job.id}`}
+                              className="font-medium text-secondary-foreground underline-offset-4 hover:text-primary hover:underline"
+                            >
+                              View job
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             ) : (
               <div className="p-6 text-sm text-muted-foreground">
                 {session.role === "ADMIN"

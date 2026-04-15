@@ -43,13 +43,13 @@ export default async function CandidatesPage() {
 
   return (
     <AppShell name={session.name} role={session.role}>
-      <main className="min-h-full bg-background p-6">
+      <main className="min-h-full bg-background px-4 py-5 sm:px-6 sm:py-6">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-secondary-foreground">
               Candidates
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-primary">
+            <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
               {session.role === "ADMIN" ? "Manage candidate profiles" : "Your candidate profile"}
             </h1>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
@@ -60,13 +60,13 @@ export default async function CandidatesPage() {
           </div>
 
           {session.role === "ADMIN" ? (
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto">
               <Link href="/candidates/create">Create candidate</Link>
             </Button>
           ) : null}
         </div>
 
-        <div className="mb-6 grid gap-4 md:grid-cols-3">
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <Card className="border-l-4 border-l-primary bg-linear-to-br from-card via-card to-secondary/10">
             <CardContent className="p-5">
               <p className="text-sm text-muted-foreground">
@@ -98,54 +98,112 @@ export default async function CandidatesPage() {
         <Card>
           <CardContent className="p-0">
             {candidates.length ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Skills</TableHead>
-                    <TableHead>Applications</TableHead>
-                    <TableHead>Resume</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <>
+                <div className="grid gap-4 p-4 lg:hidden">
                   {candidates.map((candidate) => (
-                    <TableRow key={candidate.id}>
-                      <TableCell>{candidate.name}</TableCell>
-                      <TableCell>{candidate.email}</TableCell>
-                      <TableCell>{truncate(candidate.skills, 45)}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {candidate.applications.length}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {candidate.resume ? (
-                          <a
-                            href={candidate.resume}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="font-medium text-primary underline-offset-4 hover:underline"
-                          >
-                            Open
-                          </a>
-                        ) : (
-                          <span className="text-muted-foreground">No resume</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
+                    <Card
+                      key={candidate.id}
+                      className="border border-primary/10 bg-primary/5 shadow-none"
+                    >
+                      <CardContent className="space-y-4 p-4">
+                        <div className="space-y-1">
+                          <p className="font-medium text-primary">{candidate.name}</p>
+                          <p className="text-sm text-muted-foreground">{candidate.email}</p>
+                        </div>
+
+                        <div className="space-y-3 text-sm text-muted-foreground">
+                          <p>
+                            <span className="font-medium text-primary">Skills:</span>{" "}
+                            {truncate(candidate.skills, 90)}
+                          </p>
+                          <div className="flex items-center justify-between gap-3">
+                            <span>
+                              <span className="font-medium text-primary">Applications:</span>{" "}
+                              {candidate.applications.length}
+                            </span>
+                            <Badge variant="secondary">
+                              {candidate.applications.length}
+                            </Badge>
+                          </div>
+                          <p>
+                            <span className="font-medium text-primary">Resume:</span>{" "}
+                            {candidate.resume ? (
+                              <a
+                                href={candidate.resume}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-medium text-primary underline-offset-4 hover:underline"
+                              >
+                                Open
+                              </a>
+                            ) : (
+                              "No resume"
+                            )}
+                          </p>
+                        </div>
+
                         <Link
                           href={`/candidates/${candidate.id}/edit`}
-                          className="font-medium text-secondary-foreground underline-offset-4 hover:text-primary hover:underline"
+                          className="inline-flex text-sm font-medium text-secondary-foreground underline-offset-4 hover:text-primary hover:underline"
                         >
-                          Edit
+                          Edit profile
                         </Link>
-                      </TableCell>
-                    </TableRow>
+                      </CardContent>
+                    </Card>
                   ))}
-                </TableBody>
-              </Table>
+                </div>
+
+                <div className="hidden lg:block">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Applications</TableHead>
+                        <TableHead>Resume</TableHead>
+                        <TableHead>Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {candidates.map((candidate) => (
+                        <TableRow key={candidate.id}>
+                          <TableCell>{candidate.name}</TableCell>
+                          <TableCell>{candidate.email}</TableCell>
+                          <TableCell>{truncate(candidate.skills, 45)}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {candidate.applications.length}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {candidate.resume ? (
+                              <a
+                                href={candidate.resume}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-medium text-primary underline-offset-4 hover:underline"
+                              >
+                                Open
+                              </a>
+                            ) : (
+                              <span className="text-muted-foreground">No resume</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Link
+                              href={`/candidates/${candidate.id}/edit`}
+                              className="font-medium text-secondary-foreground underline-offset-4 hover:text-primary hover:underline"
+                            >
+                              Edit
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             ) : (
               <div className="p-6 text-sm text-muted-foreground">
                 {session.role === "ADMIN"

@@ -37,13 +37,13 @@ export default async function JobsPage() {
 
   return (
     <AppShell name={session.name} role={session.role}>
-      <main className="min-h-full bg-background p-6">
+      <main className="min-h-full bg-background px-4 py-5 sm:px-6 sm:py-6">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-secondary-foreground">
               Jobs
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-primary">
+            <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
               Explore open roles
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -53,7 +53,7 @@ export default async function JobsPage() {
           </div>
 
           {session.role === "ADMIN" ? (
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto">
               <Link href="/jobs/create">Create job</Link>
             </Button>
           ) : null}
@@ -62,12 +62,14 @@ export default async function JobsPage() {
         <div className="grid gap-4">
           {jobs.map((job) => (
             <Card key={job.id} className="border-primary/10">
-              <CardHeader className="gap-3 md:flex-row md:items-start md:justify-between">
-                <div>
-                  <CardTitle>{job.title}</CardTitle>
+              <CardHeader className="gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="text-lg leading-tight sm:text-xl">
+                    {job.title}
+                  </CardTitle>
                   <CardDescription className="mt-1">{job.company}</CardDescription>
                 </div>
-                <Badge variant="secondary">
+                <Badge variant="secondary" className="self-start">
                   {job.applications.length} application{job.applications.length === 1 ? "" : "s"}
                 </Badge>
               </CardHeader>
@@ -75,7 +77,7 @@ export default async function JobsPage() {
                 <p className="text-sm leading-6 text-muted-foreground">
                   {truncate(job.description, 190)}
                 </p>
-                <div className="flex flex-wrap gap-3 text-sm font-medium">
+                <div className="flex flex-col gap-2 text-sm font-medium sm:flex-row sm:flex-wrap sm:gap-3">
                   <Link
                     href={`/jobs/${job.id}`}
                     className="text-primary underline-offset-4 hover:underline"
