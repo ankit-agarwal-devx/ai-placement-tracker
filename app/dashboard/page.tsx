@@ -13,7 +13,13 @@ export default async function DashboardPage() {
 
   return (
     <AppShell name={session.name} role={session.role}>
-      <MainContent />
+      <MainContent
+        session={{
+          userId: session.userId,
+          name: session.name,
+          role: session.role,
+        }}
+      />
     </AppShell>
   )
 }

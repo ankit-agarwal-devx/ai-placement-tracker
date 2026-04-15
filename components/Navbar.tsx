@@ -18,8 +18,7 @@ export default function Navbar({ name = "", role }: NavbarProps) {
       .toUpperCase() || "HF"
 
   return (
-    <div className="flex items-center justify-between border-b border-primary/10 bg-card/95 p-4 backdrop-blur">
-      <Input placeholder="Search candidates, jobs..." className="w-1/3" />
+    <div className="flex items-center justify-end border-b border-primary/10 bg-card/95 p-4 backdrop-blur">
 
       <div className="flex items-center gap-3">
         <div className="text-right">
