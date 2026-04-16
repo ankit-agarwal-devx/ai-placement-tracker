@@ -112,7 +112,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_color-mix(in_oklab,var(--color-primary)_20%,transparent),transparent_28%),radial-gradient(circle_at_88%_12%,_color-mix(in_oklab,var(--color-secondary)_26%,transparent),transparent_22%),radial-gradient(circle_at_52%_88%,_color-mix(in_oklab,var(--color-tertiary)_26%,transparent),transparent_28%),linear-gradient(180deg,var(--color-background),color-mix(in_oklab,var(--color-accent)_32%,var(--color-background)))]">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_color-mix(in_oklab,var(--color-primary)_20%,transparent),transparent_28%),radial-gradient(circle_at_88%_12%,_color-mix(in_oklab,var(--color-secondary)_26%,transparent),transparent_22%),radial-gradient(circle_at_52%_88%,_color-mix(in_oklab,var(--color-tertiary)_26%,transparent),transparent_28%),linear-gradient(180deg,var(--color-background),color-mix(in_oklab,var(--color-accent)_32%,var(--color-background)))]">
       <div className="pointer-events-none absolute inset-0 opacity-75">
         <div className="absolute left-[6%] top-20 h-48 w-48 rounded-full bg-primary/18 blur-3xl" />
         <div className="absolute right-[9%] top-28 h-56 w-56 rounded-full bg-secondary/18 blur-3xl" />
@@ -120,7 +120,7 @@ export default async function HomePage() {
       </div>
 
       <section className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-6 sm:px-6 lg:px-10">
-        <header className="flex flex-col gap-5 rounded-[30px] border border-white/50 bg-card/78 px-5 py-4 shadow-[0_24px_90px_-32px_color-mix(in_oklab,var(--color-primary)_28%,transparent)] backdrop-blur md:flex-row md:items-center md:justify-between">
+        <header className="sticky top-2 z-50 flex flex-col gap-5 rounded-[30px] border border-white/50 bg-card/78 px-5 py-4 shadow-[0_24px_90px_-32px_color-mix(in_oklab,var(--color-primary)_28%,transparent)] backdrop-blur md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-secondary-foreground">
               HireFlow AI
