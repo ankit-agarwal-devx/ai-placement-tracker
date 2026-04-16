@@ -9,6 +9,8 @@ type JobsCreatePageProps = {
   searchParams: Promise<{ jobId?: string | string[] }>
 }
 
+export const dynamic = "force-dynamic"
+
 export default async function JobsCreatePage({ searchParams }: JobsCreatePageProps) {
   const session = await getSession()
 

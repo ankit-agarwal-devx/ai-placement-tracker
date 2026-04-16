@@ -8,13 +8,15 @@ import { applyToJob } from "@/app/jobs/actions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getCachedJobDetails } from "@/lib/cached-data"
+import { getServerJobDetails } from "@/lib/server-data"
 import { getSession } from "@/lib/session"
 
 type JobDetailsPageProps = {
   params: Promise<{ id: string }>
   searchParams: Promise<{ status?: string | string[] }>
 }
+
+export const dynamic = "force-dynamic"
 
 export default async function JobDetailsPage({
   params,
@@ -32,7 +34,7 @@ export default async function JobDetailsPage({
     ? resolvedSearchParams.status[0]
     : resolvedSearchParams.status
 
-  const job = await getCachedJobDetails(id)
+  const job = await getServerJobDetails(id)
 
   if (!job) {
     notFound()

@@ -18,9 +18,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  getCachedAdminDashboardData,
-  getCachedStudentDashboardData,
-} from "@/lib/cached-data"
+  getServerAdminDashboardData,
+  getServerStudentDashboardData,
+} from "@/lib/server-data"
 
 type MainContentProps = {
   session: {
@@ -38,7 +38,7 @@ export default async function MainContent({ session }: MainContentProps) {
       applicationCount,
       shortlistedCount,
       recentApplications,
-    } = await getCachedAdminDashboardData()
+    } = await getServerAdminDashboardData()
 
     return (
       <main className="min-h-screen bg-background p-6">
@@ -150,7 +150,7 @@ export default async function MainContent({ session }: MainContentProps) {
   }
 
   const { candidateProfile, applications, recentJobs } =
-    await getCachedStudentDashboardData(session.userId)
+    await getServerStudentDashboardData(session.userId)
 
   const selectedCount = applications.filter(
     (application) => application.status === "SELECTED"

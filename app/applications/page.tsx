@@ -18,8 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getCachedApplications } from "@/lib/cached-data"
+import { getServerApplications } from "@/lib/server-data"
 import { getSession } from "@/lib/session"
+
+export const dynamic = "force-dynamic"
 
 export default async function ApplicationsPage() {
   const session = await getSession()
@@ -28,7 +30,7 @@ export default async function ApplicationsPage() {
     redirect("/login")
   }
 
-  const applications = await getCachedApplications(session.role, session.userId)
+  const applications = await getServerApplications(session.role, session.userId)
 
   const selectedCount = applications.filter(
     (application) => application.status === "SELECTED"

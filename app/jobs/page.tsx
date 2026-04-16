@@ -11,8 +11,10 @@ import {
 } from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { getCachedJobsList } from "@/lib/cached-data"
+import { getServerJobsList } from "@/lib/server-data"
 import { getSession } from "@/lib/session"
+
+export const dynamic = "force-dynamic"
 
 export default async function JobsPage() {
   const session = await getSession()
@@ -21,7 +23,7 @@ export default async function JobsPage() {
     redirect("/login")
   }
 
-  const jobs = await getCachedJobsList()
+  const jobs = await getServerJobsList()
 
   return (
     <AppShell name={session.name} role={session.role}>

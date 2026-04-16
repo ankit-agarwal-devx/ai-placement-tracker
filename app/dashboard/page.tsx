@@ -4,6 +4,8 @@ import AppShell from "../components/AppShell"
 import MainContent from "../components/MainContent"
 import { getSession } from "@/lib/session"
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardPage() {
   const session = await getSession()
 

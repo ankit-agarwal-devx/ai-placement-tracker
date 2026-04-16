@@ -14,8 +14,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getCachedCandidates } from "@/lib/cached-data"
+import { getServerCandidates } from "@/lib/server-data"
 import { getSession } from "@/lib/session"
+
+export const dynamic = "force-dynamic"
 
 export default async function CandidatesPage() {
   const session = await getSession()
@@ -24,7 +26,7 @@ export default async function CandidatesPage() {
     redirect("/login")
   }
 
-  const candidates = await getCachedCandidates(session.role, session.userId)
+  const candidates = await getServerCandidates(session.role, session.userId)
 
   return (
     <AppShell name={session.name} role={session.role}>
