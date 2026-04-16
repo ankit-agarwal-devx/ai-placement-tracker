@@ -20,6 +20,27 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Testing
+
+Jest is configured with `next/jest` for this project.
+
+Available scripts:
+
+```bash
+npm run test
+npm run test:watch
+npm run test:coverage
+```
+
+Current test focus:
+
+- Unit tests for server-side data helpers in `lib/`
+- Component/integration-style tests for client UI flows with mocked server actions
+
+Current limitation:
+
+- Jest does not replace browser-level end-to-end coverage. For navigation, auth, and full user journeys, add Playwright or Cypress separately.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
