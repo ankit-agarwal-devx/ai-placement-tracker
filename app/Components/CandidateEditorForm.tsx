@@ -44,6 +44,13 @@ export default function CandidateEditorForm({
   mode,
   role,
 }: CandidateEditorFormProps) {
+  const nameErrorId = "candidate-name-error"
+  const emailErrorId = "candidate-email-error"
+  const passwordErrorId = "candidate-password-error"
+  const skillsErrorId = "candidate-skills-error"
+  const resumeErrorId = "candidate-resume-error"
+  const formMessageId = "candidate-form-message"
+
   const action =
     mode === "edit" && candidate
       ? updateCandidateProfile.bind(null, candidate.id)
@@ -52,6 +59,12 @@ export default function CandidateEditorForm({
   const [state, formAction, pending] = useActionState(action, initialCandidateFormState)
 
   const isCreate = mode === "create"
+  const nameErrors = state.fieldErrors?.name
+  const emailErrors = state.fieldErrors?.email
+  const passwordErrors = state.fieldErrors?.password
+  const skillsErrors = state.fieldErrors?.skills
+  const resumeErrors = state.fieldErrors?.resume
+  const hasFormMessage = Boolean(state.message)
 
   return (
     <Card className="w-full max-w-3xl border-primary/15 shadow-lg shadow-primary/10">
@@ -76,9 +89,11 @@ export default function CandidateEditorForm({
               name="name"
               defaultValue={candidate?.name ?? ""}
               placeholder="Ankit Agarwal"
+              aria-describedby={nameErrors?.length ? nameErrorId : undefined}
+              aria-invalid={nameErrors?.length ? true : undefined}
               required
             />
-            <FieldError errors={state.fieldErrors?.name} />
+            <FieldError id={nameErrorId} errors={nameErrors} />
           </FormField>
 
           <FormField>
@@ -89,9 +104,11 @@ export default function CandidateEditorForm({
               type="email"
               defaultValue={candidate?.email ?? ""}
               placeholder="candidate@example.com"
+              aria-describedby={emailErrors?.length ? emailErrorId : undefined}
+              aria-invalid={emailErrors?.length ? true : undefined}
               required
             />
-            <FieldError errors={state.fieldErrors?.email} />
+            <FieldError id={emailErrorId} errors={emailErrors} />
           </FormField>
 
           <FormField>
@@ -103,9 +120,11 @@ export default function CandidateEditorForm({
               name="password"
               type="password"
               placeholder={isCreate ? "Minimum 6 characters" : "Leave blank to keep current password"}
+              aria-describedby={passwordErrors?.length ? passwordErrorId : undefined}
+              aria-invalid={passwordErrors?.length ? true : undefined}
               required={isCreate}
             />
-            <FieldError errors={state.fieldErrors?.password} />
+            <FieldError id={passwordErrorId} errors={passwordErrors} />
           </FormField>
 
           <FormField>
@@ -115,9 +134,11 @@ export default function CandidateEditorForm({
               name="skills"
               defaultValue={candidate?.skills ?? ""}
               placeholder="React, Node.js, SQL"
+              aria-describedby={skillsErrors?.length ? skillsErrorId : undefined}
+              aria-invalid={skillsErrors?.length ? true : undefined}
               required
             />
-            <FieldError errors={state.fieldErrors?.skills} />
+            <FieldError id={skillsErrorId} errors={skillsErrors} />
           </FormField>
 
           <FormField>
@@ -128,11 +149,17 @@ export default function CandidateEditorForm({
               type="url"
               defaultValue={candidate?.resume ?? ""}
               placeholder="https://example.com/resume.pdf"
+              aria-describedby={resumeErrors?.length ? resumeErrorId : undefined}
+              aria-invalid={resumeErrors?.length ? true : undefined}
             />
-            <FieldError errors={state.fieldErrors?.resume} />
+            <FieldError id={resumeErrorId} errors={resumeErrors} />
           </FormField>
 
-          <FormMessage tone={state.message ? "error" : "muted"}>
+          <FormMessage
+            id={formMessageId}
+            role={hasFormMessage ? "alert" : undefined}
+            tone={hasFormMessage ? "error" : "muted"}
+          >
             {state.message}
           </FormMessage>
 

@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react"
+import { axe } from "jest-axe"
 import React from "react"
 
 import CandidateEditorForm from "@/app/components/CandidateEditorForm"
@@ -65,6 +66,12 @@ describe("CandidateEditorForm", () => {
     )
   })
 
+  it("has no detectable accessibility violations in the create flow", async () => {
+    const { container } = render(<CandidateEditorForm mode="create" role="ADMIN" />)
+
+    expect(await axe(container)).toHaveNoViolations()
+  })
+
   it("renders the edit flow with current values, validation feedback, and pending state", () => {
     useActionStateMock.mockReturnValueOnce([
       {
@@ -104,6 +111,15 @@ describe("CandidateEditorForm", () => {
     expect(screen.getByLabelText("New password")).not.toBeRequired()
     expect(screen.getByText("This email is already in use.")).toBeInTheDocument()
     expect(screen.getByText("Please fix the highlighted fields.")).toBeInTheDocument()
+    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid", "true")
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-describedby",
+      "candidate-email-error"
+    )
+    expect(screen.getByText("This email is already in use.")).toHaveAttribute(
+      "role",
+      "alert"
+    )
     expect(screen.getByRole("button", { name: "Saving..." })).toBeDisabled()
   })
 })

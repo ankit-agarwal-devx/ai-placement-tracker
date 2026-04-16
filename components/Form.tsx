@@ -80,10 +80,20 @@ export function FormActions({
   )
 }
 
-export function FieldError({ errors }: { errors?: string[] }) {
+export function FieldError({
+  errors,
+  id,
+}: {
+  errors?: string[]
+  id?: string
+}) {
   if (!errors?.length) {
     return null
   }
 
-  return <p className="text-sm text-destructive">{errors[0]}</p>
+  return (
+    <p id={id} role="alert" className="text-sm text-destructive">
+      {errors[0]}
+    </p>
+  )
 }
