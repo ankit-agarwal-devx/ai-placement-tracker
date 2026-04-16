@@ -6,26 +6,29 @@ import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
 import type { RegisterFormState } from "@/app/register/register-form-state"
+import { assertTrustedOrigin } from "@/lib/security"
+import {
+  candidateNameSchema,
+  emailSchema,
+  optionalSkillsSchema,
+  passwordSchema,
+  resumeUrlSchema,
+} from "@/lib/validation"
 
 const registerSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters."),
-  email: z.email("Enter a valid email address.").transform((value) => value.toLowerCase()),
-  password: z.string().min(6, "Password must be at least 6 characters."),
-  skills: z.string().trim().optional(),
-  resume: z
-    .string()
-    .trim()
-    .optional()
-    .refine(
-      (value) => !value || value.startsWith("http://") || value.startsWith("https://"),
-      "Resume must be a valid URL."
-    ),
+  name: candidateNameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  skills: optionalSkillsSchema,
+  resume: resumeUrlSchema,
 })
 
 export async function registerCandidate(
   _prevState: RegisterFormState,
   formData: FormData
 ): Promise<RegisterFormState> {
+  await assertTrustedOrigin()
+
   const parsed = registerSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),

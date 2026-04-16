@@ -6,10 +6,12 @@ import { z } from "zod"
 
 import type { LoginFormState } from "@/app/login/login-form-state"
 import { prisma } from "@/lib/prisma"
+import { assertTrustedOrigin } from "@/lib/security"
 import { createSession } from "@/lib/session"
+import { emailSchema } from "@/lib/validation"
 
 const loginSchema = z.object({
-  email: z.string().email("Enter a valid email address.").transform((value) => value.toLowerCase()),
+  email: emailSchema,
   password: z.string().min(1, "Password is required."),
 })
 
@@ -17,6 +19,8 @@ export async function loginUser(
   _prevState: LoginFormState,
   formData: FormData
 ): Promise<LoginFormState> {
+  await assertTrustedOrigin()
+
   const parsed = loginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
+import { assertTrustedOrigin } from "@/lib/security"
 import { getSession } from "@/lib/session"
 import {
   buildAdminShortlist,
@@ -29,6 +30,8 @@ const aiRequestSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    await assertTrustedOrigin()
+
     const session = await getSession()
 
     if (!session) {

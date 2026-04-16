@@ -6,18 +6,26 @@ import { z } from "zod"
 
 import type { JobFormState } from "@/app/jobs/job-form-state"
 import { prisma } from "@/lib/prisma"
+import { assertTrustedOrigin } from "@/lib/security"
 import { getSession } from "@/lib/session"
+import {
+  companySchema,
+  jobDescriptionSchema,
+  jobTitleSchema,
+} from "@/lib/validation"
 
 const jobSchema = z.object({
-  title: z.string().trim().min(2, "Title must be at least 2 characters."),
-  company: z.string().trim().min(2, "Company must be at least 2 characters."),
-  description: z.string().trim().min(20, "Description must be at least 20 characters."),
+  title: jobTitleSchema,
+  company: companySchema,
+  description: jobDescriptionSchema,
 })
 
 export async function saveJob(
   _prevState: JobFormState,
   formData: FormData
 ): Promise<JobFormState> {
+  await assertTrustedOrigin()
+
   const session = await getSession()
 
   if (!session) {
@@ -69,6 +77,8 @@ export async function saveJob(
 }
 
 export async function applyToJob(jobId: string) {
+  await assertTrustedOrigin()
+
   const session = await getSession()
 
   if (!session) {

@@ -7,21 +7,22 @@ import { z } from "zod"
 
 import type { CandidateFormState } from "@/app/candidates/candidate-form-state"
 import { prisma } from "@/lib/prisma"
+import { assertTrustedOrigin } from "@/lib/security"
 import { getSession } from "@/lib/session"
+import {
+  candidateNameSchema,
+  emailSchema,
+  passwordSchema,
+  resumeUrlSchema,
+  skillsSchema,
+} from "@/lib/validation"
 
 const createCandidateSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters."),
-  email: z.email("Enter a valid email address.").transform((value) => value.toLowerCase()),
-  password: z.string().min(6, "Password must be at least 6 characters."),
-  skills: z.string().trim().min(2, "Skills must be at least 2 characters."),
-  resume: z
-    .string()
-    .trim()
-    .optional()
-    .refine(
-      (value) => !value || value.startsWith("http://") || value.startsWith("https://"),
-      "Resume must be a valid URL."
-    ),
+  name: candidateNameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  skills: skillsSchema,
+  resume: resumeUrlSchema,
 })
 
 const updateCandidateSchema = createCandidateSchema.omit({ password: true }).extend({
@@ -32,6 +33,8 @@ export async function createCandidateProfile(
   _prevState: CandidateFormState,
   formData: FormData
 ): Promise<CandidateFormState> {
+  await assertTrustedOrigin()
+
   const session = await getSession()
 
   if (!session) {
@@ -106,6 +109,8 @@ export async function updateCandidateProfile(
   _prevState: CandidateFormState,
   formData: FormData
 ): Promise<CandidateFormState> {
+  await assertTrustedOrigin()
+
   const session = await getSession()
 
   if (!session) {
